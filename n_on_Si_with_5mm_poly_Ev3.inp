@@ -1,0 +1,203 @@
+[ T i t l e ]
+Sensor de Si de 665 micrómetros de espesor, 9.225 cm x 2.352 cm de area transversal, con el paquete de Cu de 2 mm de espesor.
+Todo dentro de una cámara de vacío cuadrada de 20 cm de arista de aluminio de 1.1 cm de espesor (para visualizar y para usar algo más realista). Original en 0.1 cm.
+Frente al detector se encuentra una placa de polipropileno de 5mm de espesor.
+Fuente cúbica unidireccional neutrones monoenergéticos. Se calcula la energía depositada en Si. 
+
+[ P a r a m e t e r s ]
+ icntl    =           0     # (D=0)  con un 8 genera el eps que permite ver la geometria, con 0 hay interacciones, con 5 ves la fuente sin interacciones
+ maxcas   =          1e5    # (D=10) numero de particulas por batch
+ maxbch   =          1e3    # (D=10) numero de batches
+ #file(1)  = /mnt/Data/phits # (D=) nombre de la carpeta donde se encuentra instalado PHITS
+ file(1)  = /home/eliana/phits # (D=) nombre de la carpeta donde se encuentra instalado PHITS
+ file(6)  = phits.out       # (D=phits.out) general output file name
+ negs     =     1
+ emin(1)  =     1.0e-8      # (D=1e-3) energía de corte proton [MeV] 
+ emin(2)  =     1.0e-11     # (D=1e-3) energía de corte neutron [MeV] esta es la mínima para transporte y generación de neutrones
+ emin(12) =     1.0e-6      # (D=0.1 si negs=1) energía de corte e- [MeV] esta es la mínima para transporte y generación de e- y e+
+ emin(13) =     1.0e-6      # (D=0.1 si negs=1) energía de corte e+ [MeV]
+ emin(14) =     1.0e-3      # (D=0.001 si negs=1) energía de corte fotones [MeV] esta es la mínima para transporte y generación
+ negs     =           1     # (D=0) =1 EGS Transporte de e-, e+, y fotones EGS5 database
+ e-mode   =           2     # (D=0) D=0 Muestreo simple, D=1 + modelo de evaporación, D=2 + cosecha de partículas cargadas + distribución de En 
+ ikerman  =           1     # (D=0) Kerma approximation for neutrons. D=0,1 it is not used, D=2 it is used.
+ ipnint   =           1     # (D=0) 0: no, 1: consider photo-nuclear reaction
+ itall    =           1     #  Actualizo resultados al finalizar cada lote (gráficos)
+# istdev   = -1             #  restart calculation mode (para continuar simulacion)
+
+set: c1[0.0665]             $ espesor del detector en z [cm]
+set: c2[9.225]              $ lado largo de la cara activa CCD en plano xy [cm]
+set: c3[2.352]              $ lado corto de la cara activa CCD en plano xy [cm]
+set: c4[10.5]               $ lado corto del paquete del CCD [cm]
+set: c5[16.5]               $ lado largo del paquete del CCD [cm]
+set: c6[0.2665]             $ espesor total del paquete de cobre del CCD [cm]
+set: c7[10.00]              $ semiancho interno del Cubo azul [cm]
+set: c8[11.10]              $ semiancho externo del Cubo azul [cm] OJOTA le sumé 1 cm para mejorar la visualización. 
+set: c9[0.20]               $ espesor del paquete de Cu [cm]
+set: c12[0.50]              $ espesor de la placa de polypropileno [cm]
+set: c13[1.00]              $ posicion en z de la placa de polypropileno [cm] #Original: 1.00
+set: c30[500]               $ caja universo [cm]
+
+[ S o u r c e ]
+ $totfact = 1e6                 $flujo total
+   s-type =   2                 # Rectangular solid and rectangle source
+   proj =  neutron              # kind of incident particle    
+   dir =   1.0                  # z-direction of beam [cosine]     
+   x0 = -0.1                    # minimum position of x-axis [cm]
+   x1 =  0.1                    # maximum position of x-axis [cm]
+   y0 = -0.1                    # minimum position of y-axis [cm]
+   y1 =  0.1                    # maximum position of y-axis [cm]
+   z0 = -20.0                   # minimum position of z-axis [cm]
+   z1 = -19.9                   # maximum position of z-axis [cm]
+   e-type = 1                   # Distribución discreta de energía
+   #e-type = 21                  # Distribución continua de energía
+   infl: {n_HISPANOS.inp}[-14]  # Si esta esta linea carga el espectro, sino hay que habilitar e0
+   $e0 =   20e-3         # Energia [MeV/nucleon]
+
+[ M a t e r i a l ]
+mat[1]                      $Aire, fracción atómica. Densidad: 1.205e-3 g/cm^3
+N 7.84374e-1           
+O 2.1076e-1            
+Ar 4.6911e-3           
+C 1.7579e-4            
+            
+mat[2]                      $2.71 g/cm3
+27Al 1           
+            
+mat[3]                      $Polipropileno. Densidad: 0.90 g/cm3
+C 3
+H 6
+
+mat[4]                      $Si natural. Densidad: 2.33 g/cm3
+28Si 0.92234
+29Si 0.04683
+30Si 0.03087
+
+mat[5]                      $Cu natural. Densidad: 8.960 g/cm3
+63Cu 0.6917
+65Cu 0.3083
+
+[ Mat Name Color ]
+mat name        color
+0 Vacio         lightgray
+1 Aire          pastelcyan
+2 Aluminio      blue
+3 Poly          magenta
+4 Si            0.267 #darkred#
+5 Cu            orange
+
+[ S u r f a c e ]
+  10  rpp     -c30 c30 -c30 c30 -c30 c30                                $ borde de la caja que representa el universo xmin , xmax, ymin , ymax , zmin, zmax
+  11  rpp      -c8 c8 -c8 c8 -c8 c8                                     $ pared externa del cubo azul
+  12  rpp      -c7 c7 -c7 c7 -c7 c7                                     $ pared interna del cubo azul
+  13  rpp     -c5/2 c5/2 -c4/2 c4/2 -c13 -c13+c12                       $ superficie de la placa de polipropileno
+  14  rpp     -c2/2 c2/2 -c3/2 c3/2 0. c1                               $ superfie del detector
+  15  rpp     -c2/2-c9 c2/2+c9 -c3/2-c9 c3/2+c9 0. c1+c9                $ Paquete de Cu. Para hacer solo una espalda reemplazar 0. -> c1
+
+[ C e l l ] 
+ 100   -1  10                                           $ exterior al universo
+$101   1 -1.0 -10 11                                    $ espacio alrededor del cubo azul de aluminio. Le puse aire para probar material.
+ 101   0 -10 11                                         $ espacio alrededor del cubo azul de aluminio. En vacío.
+ 102   2 -2.71 -11 12                                   $ cubo azul de aluminio (cámara de vacío)
+ 103   0 -12 14 13 15                                   $ espacio al interior cubo azul y fuera de la placa de polipropileno y del detector empaquetado
+ 104   3 -0.90 -13                                      $ placa de polipropileno
+ 105   4 -2.33 -14                                      $ detector de silicio
+ 106   5 -8.96 -15 14                                   $ paquete de Cu
+
+[ T - C r o s s ]
+    title = Source n beam
+    mesh =  reg                                        # mesh type is region-wise
+    reg =  5                                           # number of crossing regions
+    r-from  r-to   area
+    101     102    1                                   # de la fuente hacia el vessel 
+    102     103    1                                   # hacia el interior del vessel
+    103     104    1                                   # hacia la placa de polipropileno
+    103     105    1                                   # del vessel al detector
+    106     105    1                                   # del paquete de Cu al detector
+    e-type =   2                                       # e-mesh is linear (2: lin, 3:log) given by emin, emax and ne
+    ne =   1000                                        # bines
+    emin =   1e-6                                     # minimum value of e-mesh points (MeV)
+    emax =   140e-3                                     # maximum value of e-mesh points (MeV)
+    part = neutron
+    unit =    2                                        # unit is [1/cm2 /MeV/source]
+    axis =  eng                                        # axis of output (eng: energy)
+    file = corriente.output                            # nombre del archivo de salida para 'axis'
+    output = current                                   # surface crossing flux
+    gshow =    3                                       # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+    epsout =   2                                       # genera archivo eps con ANGEL con barras de error
+
+[ T - Deposit ]off
+    title = Energy deposition
+    mesh =  reg                                        # mesh type is region mesh
+    reg  =  105                                        # region 105 es el detector
+    unit =    3                                        # unit is Number [1/source]; only for output=deposit
+    material =   all                                   # (D=all) number of specific material
+    output =  deposit                                  # total deposit energy
+    e-type = 2                                         # e-mesh dividida en escala lineal
+    #edel = 0.01                                       # 0.0001
+    ne = 1000                                          # bines
+    emin = 1e-6                                       # mínimo valor de energía en el intervalo total de cálculo.
+    emax = 140e-3                                       # máximo valor de energía en el intervalo total de cálculo.
+    part =  all Si neutron alpha   
+    axis =    eng                                   # axis of output
+    deposit = 0                  #distribution of 0: total deposit energy with contribution of each particle 1: deposit energy by each particle
+    file = deposit_on_Si_5mm_Poly_HISP_lin.out      # file name of output for the above axis
+    gshow =     3                                   # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+    epsout =    2                                   # (D=0) generate eps file by ANGEL
+
+[ T - T r a c k ]off
+     mesh =  xyz            # mesh type is xyz scoring mesh
+   x-type =    2            # x-mesh is linear given by xmin, xmax and nx
+       nx =  200            # number of x-mesh points
+     xmin =   -1.5*c8            # minimum value of x-mesh points
+     xmax =    1.5*c8            # maximum value of x-mesh points
+   y-type =    1            # y-mesh is given by the below data
+       ny =    1            # number of y-mesh points
+           -5.0  5.0
+   z-type =    2            # z-mesh is linear given by zmin, zmax and nz
+       nz =  1000           # number of z-mesh points
+     zmin =  -21#-1.0#           # minimum value of z-mesh points
+     zmax =   1.5*c8#2.0#           # maximum value of z-mesh points
+   t-type =    2            # t-mesh is linear given by tmin, tmax and nt
+       nt =    1            # number of t-mesh points
+     tmin =   0.0           # minimum value of t-mesh points
+     tmax =   1.0           # maximum value of t-mesh points
+     part =  all      
+   e-type =    1            # e-mesh is given by the below data
+       ne =    1            # number of e-mesh points
+            0.0  1000.0
+     unit =    1            # unit is [1/cm^2/source]
+     axis =   xz            # axis of output
+     file = track_xz.out       # file name of output for the above axis
+    title = n beam source with energies between 20 and 120 keV 
+    gshow =    3            # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+   epsout =    1            # (D=0) generate eps file by ANGEL
+
+[ T - T r a c k ]off
+     mesh =  xyz            # mesh type is xyz scoring mesh
+   y-type =    2            # x-mesh is linear given by xmin, xmax and nx
+       ny =  200            # number of x-mesh points
+     ymin =   -1.5*c8            # minimum value of x-mesh points
+     ymax =    1.5*c8            # maximum value of x-mesh points
+   x-type =    1            # y-mesh is given by the below data
+       nx =    1            # number of y-mesh points
+           -5.0  5.0
+   z-type =    2            # z-mesh is linear given by zmin, zmax and nz
+       nz =  1000           # number of z-mesh points
+     zmin =  -21           # minimum value of z-mesh points
+     zmax =   1.5*c8           # maximum value of z-mesh points
+   t-type =    2            # t-mesh is linear given by tmin, tmax and nt
+       nt =    1            # number of t-mesh points
+     tmin =   0.0           # minimum value of t-mesh points
+     tmax =   1.0           # maximum value of t-mesh points
+     part =  all      
+   e-type =    1            # e-mesh is given by the below data
+       ne =    1            # number of e-mesh points
+            0.0  1000.0
+     unit =    1            # unit is [1/cm^2/source]
+     axis =   yz            # axis of output
+     file = track_yz.out       # file name of output for the above axis
+    title = n beam source with energies between 20 and 120 keV 
+    gshow =    3            # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+   epsout =    1            # (D=0) generate eps file by ANGEL
+
+[ E n d ]

@@ -1,0 +1,195 @@
+[ T i t l e ]
+Blanco: Película de 16 micrones de espesor de LiF. Fuente de protones de 6 MeV, prisma de base cuadrada de 0.2 cm de lado, 0.1 cm de espesor y unidireccional. 
+Se calcula la corriente de partículas secundarias y de fotones que emergen del blanco. 
+05/12/2025
+
+[ P a r a m e t e r s ]
+ icntl    =           0     # (D=0)  con un 8 genera el eps que permite ver la geometria, con 0 hay interacciones, con 5 ves la fuente sin interacciones
+ maxcas   =          1e5    # (D=10) numero de particulas por batch
+ maxbch   =          1e4    # (D=10) numero de batches
+ #file(1)  = /mnt/Data/phits # (D=) nombre de la carpeta donde se encuentra instalado PHITS
+ file(1)  = /home/eliana/phits # (D=) nombre de la carpeta donde se encuentra instalado PHITS
+ file(6)  = phits_6MeV_LiF.out       # (D=phits.out) general output file name
+ negs     =     1
+ emin(1)  =     1.0e-8      # (D=1e-3) energía de corte proton [MeV] 
+ emin(2)  =     1.0e-11     # (D=1e-3) energía de corte neutron [MeV] esta es la mínima para transporte y generación de neutrones
+ emin(12) =     1.0e-6      # (D=0.1 si negs=1) energía de corte e- [MeV] esta es la mínima para transporte y generación de e- y e+
+ emin(13) =     1.0e-6      # (D=0.1 si negs=1) energía de corte e+ [MeV]
+ emin(14) =     1.0e-3      # (D=0.001 si negs=1) energía de corte fotones [MeV] esta es la mínima para transporte y generación
+ negs     =           1     # (D=0) =1 EGS Transporte de e-, e+, y fotones EGS5 database
+ e-mode   =           2     # (D=0) D=0 Muestreo simple, D=1 + modelo de evaporación, D=2 + cosecha de partículas cargadas + distribución de En 
+ ikerman  =           1     # (D=0) Kerma approximation for neutrons. D=0,1 it is not used, D=2 it is used.
+ ipnint   =           1     # (D=0) 0: no, 1: consider photo-nuclear reaction
+ itall    =           1     #  Actualizo resultados al finalizar cada lote (gráficos)
+ istdev   = -1             #  restart calculation mode (para continuar simulacion)
+
+set: c1[0.0016]              $ espesor del blanco en z [cm] 
+set: c2[9.0]              $ lado largo de la placa en plano xy [cm]
+set: c3[9.0]              $ lado corto de la placa en plano xy [cm]
+set: c8[5.0]              $ Para la visualización.
+set: c12[0.50]            $ espesor de la placa de polypropileno [cm]
+set: c13[1.00]            $ posicion en z de la placa de polypropileno [cm]
+set: c30[500]             $ caja universo [cm]
+
+[ S o u r c e ]
+ $totfact = 1e6                $flujo total
+   s-type =   2                # Rectangular solid and rectangle source
+   proj =  proton             # kind of incident particle    
+   dir =   1.0                 # z-direction of beam [cosine]     
+   x0 = -0.1                   # minimum position of x-axis [cm]
+   x1 =  0.1                   # maximum position of x-axis [cm]
+   y0 = -0.1                   # minimum position of y-axis [cm]
+   y1 =  0.1                   # maximum position of y-axis [cm]
+   z0 = -1.0                   # minimum position of z-axis [cm]
+   z1 = -0.9                   # maximum position of z-axis [cm]
+   e0 = 6.0                    # energía del proyectil [MeV]
+
+[ M a t e r i a l ]
+mat[1]                      $Aire, fracción atómica. Densidad: 1.205e-3 g/cm^3
+N 7.84374e-1           
+O 2.1076e-1            
+Ar 4.6911e-3           
+C 1.7579e-4            
+            
+mat[2]                      $2.71 g/cm3
+27Al 1           
+            
+mat[3]                      $Polipropileno. Densidad: 0.90 g/cm3
+C 3
+H 6
+
+mat[4]                      $Si natural. Densidad: 2.33 g/cm3
+28Si 0.92234
+29Si 0.04683
+30Si 0.03087
+
+mat[5]                      $Cu natural. Densidad: 8.960 g/cm3
+63Cu 0.6917
+65Cu 0.3083
+
+mat[6]                      $Pb natural. Densidad: 11.340
+208Pb 0.524
+207Pb 0.221
+206Pb 0.241
+204Pb 0.014
+
+mat[7]                     $Li/LiF Densidad: 0.888 g/cm Densidad Li = 0.534, Densidad LiF =2.635 
+6Li 0.02
+7Li 0.98
+F 0.5
+
+[ Mat Name Color ]
+mat name        color
+0 Vacio         lightgray
+1 Aire          pastelcyan
+2 Aluminio      blue
+3 Poly          magenta
+4 Si            0.267 #darkred#
+5 Cu            orange
+6 Pb            violet
+7 Li/LiF  cyanblue
+
+[ S u r f a c e ]
+  10  rpp     -c30 c30 -c30 c30 -c30 c30                                $ borde de la caja que representa el universo xmin , xmax, ymin , ymax , zmin, zmax
+  14  rpp     -c2/2 c2/2 -c3/2 c3/2 0. c1                               $ superfie de la placa
+
+[ C e l l ] 
+ 100   -1  10                                   $ exterior al universo
+ 101   0 -10 14                                 $ universo donde se propagan las partículas
+ 102   7 -0.888 -14                             $ película de Li/LiF
+ $102   0 -14                                   $ placa de Li/LiF
+
+[ T - C r o s s ]
+    title = 16 microm de Li/LiF
+    mesh =  reg                                        # mesh type is region-wise
+    reg =  1                                           # number of crossing regions
+    r-from  r-to   area
+    102     101    1                                   # hacia el exterior del blanco
+    e-type =   2                                       # e-mesh is linear (2: lin, 3:log) given by emin, emax and ne
+    ne =   100                                        # bines
+    emin =   1e-4                                     # minimum value of e-mesh points (MeV)
+    emax =   140e-3                                     # maximum value of e-mesh points (MeV)
+    part = neutron photon electron 7Be all
+    unit =    2                                        # unit is [1/cm2 /MeV/source]
+    axis =  eng                                        # axis of output (eng: energy)
+    file = blanco_LiLiF.output                            # nombre del archivo de salida para 'axis'
+    output = current                                   # corriente a través de la superficie. f-curr b-curr
+    gshow =    3                                       # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+    epsout =   2                                       # genera archivo eps con ANGEL con barras de error
+
+[ T - Deposit ]off
+    title = Energy deposition
+    mesh =  reg                                        # mesh type is region mesh
+    reg  =  105                                        # region 105 es el detector
+    unit =    3                                        # unit is Number [1/source]; only for output=deposit
+    material =   all                                   # (D=all) number of specific material
+    output =  deposit                                  # total deposit energy
+    e-type = 2                                         # e-mesh dividida en escala lineal
+    #edel = 0.01                                       # 0.0001
+    ne = 1000                                          # bines
+    emin = 1e-6                                       # mínimo valor de energía en el intervalo total de cálculo.
+    emax = 140e-3                                       # máximo valor de energía en el intervalo total de cálculo.
+    part =  all Si neutron alpha   
+    axis =    eng                                   # axis of output
+    deposit = 0                  #distribution of 0: total deposit energy with contribution of each particle 1: deposit energy by each particle
+    file = deposit_on_Si_5mm_Poly_HISP_lin.out      # file name of output for the above axis
+    gshow =     3                                   # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+    epsout =    2                                   # (D=0) generate eps file by ANGEL
+
+[ T - T r a c k ]off
+     mesh =  xyz            # mesh type is xyz scoring mesh
+   x-type =    2            # x-mesh is linear given by xmin, xmax and nx
+       nx =  200            # number of x-mesh points
+     xmin =   -c8            # minimum value of x-mesh points
+     xmax =    c8            # maximum value of x-mesh points
+   y-type =    1            # y-mesh is given by the below data
+       ny =    1            # number of y-mesh points
+           -5.0  5.0
+   z-type =    2            # z-mesh is linear given by zmin, zmax and nz
+       nz =  1000           # number of z-mesh points
+     zmin =  -c8           # minimum value of z-mesh points
+     zmax =   c8            # maximum value of z-mesh points
+   t-type =    2            # t-mesh is linear given by tmin, tmax and nt
+       nt =    1            # number of t-mesh points
+     tmin =   0.0           # minimum value of t-mesh points
+     tmax =   1.0           # maximum value of t-mesh points
+     part =  all      
+   e-type =    1            # e-mesh is given by the below data
+       ne =    1            # number of e-mesh points
+            0.0  1000.0
+     unit =    1            # unit is [1/cm^2/source]
+     axis =   xz            # axis of output
+     file = track_xz.out       # file name of output for the above axis
+    title = Blanco de Li/LiF 
+    gshow =    3            # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+   epsout =    1            # (D=0) generate eps file by ANGEL
+
+[ T - T r a c k ]off
+     mesh =  xyz            # mesh type is xyz scoring mesh
+   y-type =    2            # x-mesh is linear given by xmin, xmax and nx
+       ny =  200            # number of x-mesh points
+     ymin =   -c8            # minimum value of x-mesh points
+     ymax =    c8            # maximum value of x-mesh points
+   x-type =    1            # y-mesh is given by the below data
+       nx =    1            # number of y-mesh points
+           -5.0  5.0
+   z-type =    2            # z-mesh is linear given by zmin, zmax and nz
+       nz =  1000           # number of z-mesh points
+     zmin =  -c8           # minimum value of z-mesh points
+     zmax =   c8           # maximum value of z-mesh points
+   t-type =    2            # t-mesh is linear given by tmin, tmax and nt
+       nt =    1            # number of t-mesh points
+     tmin =   0.0           # minimum value of t-mesh points
+     tmax =   1.0           # maximum value of t-mesh points
+     part =  all      
+   e-type =    1            # e-mesh is given by the below data
+       ne =    1            # number of e-mesh points
+            0.0  1000.0
+     unit =    1            # unit is [1/cm^2/source]
+     axis =   yz            # axis of output
+     file = track_yz.out       # file name of output for the above axis
+    title = Blanco de Li/LiF 
+    gshow =    3            # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+   epsout =    1            # (D=0) generate eps file by ANGEL
+
+[ E n d ]

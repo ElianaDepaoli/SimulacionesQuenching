@@ -1,0 +1,294 @@
+[ T i t l e ]
+Blanco: círculo de 2 cm de diámetro y 16 micrones de espesor de LiF, seguido de 500 micrones de espesor de cobre. 
+Fuente de protones de 6 MeV, prisma de base cuadrada de 0.2 cm de lado, 0.1 cm de espesor y unidireccional. 
+Se calcula la distribución angular del flujo de neutrones y de fotones que se producen en el blanco. 
+22/01/2026
+
+[ P a r a m e t e r s ]
+ icntl    =           0     # (D=0)  con un 8 genera el eps que permite ver la geometria, con 0 hay interacciones, con 5 ves la fuente sin interacciones
+ maxcas   =          1e6    # (D=10) numero de particulas por batch
+ maxbch   =          1e4    # (D=10) numero de batches
+ #file(1)  = /mnt/Data/phits # (D=) nombre de la carpeta donde se encuentra instalado PHITS
+ file(1)  = /home/eliana/phits # (D=) nombre de la carpeta donde se encuentra instalado PHITS
+ file(6)  = phits_p_LiFenCu_eng_ang_bloquecitos.out       # (D=phits.out) general output file name
+ nucdata  =     1           # 1: Use neutron nuclear data library from 0.1 meV to 20 MeV; 0 use neutron nuclear rection models  
+ negs     =           1     # (D=0) Transport only photons; =1 EGS Transporte de e-, e+, y fotones EGS5 database
+ emin(1)  =     1.0e-8      # (D=1e-3) energía de corte proton [MeV] 
+ emin(2)  =     1.0e-11     # (D=1e-3) energía de corte neutron [MeV] esta es la mínima para transporte y generación de neutrones
+ emin(14) =     1.0e-3      # (D=0.001 si negs=1) energía de corte fotones [MeV] esta es la mínima para transporte y generación
+ dmax(1)  =     20.0       # for JENDL-HE (high-energy nuclear data library)
+ dmax(2)  =     20.0       # for JENDL-HE (high-energy nuclear data library)
+ dmax(14) =     1e3         # Upper energy limit of atomic library use for photons [MeV]
+ #emin(12) =     1.0e-6      # (D=0.1 si negs=1) energía de corte e- [MeV] esta es la mínima para transporte y generación de e- y e+
+ #emin(13) =     1.0e-6      # (D=0.1 si negs=1) energía de corte e+ [MeV]
+ e-mode   =           2     # (D=0) D=0 Muestreo simple, D=1 + modelo de evaporación, D=2 + cosecha de partículas cargadas + distribución de En 
+ ikerman  =           1     # (D=0) Kerma approximation for neutrons. D=0,1 it is not used, D=2 it is used.
+ ipnint   =           1     # (D=0) 0: no, 1: consider photo-nuclear reaction
+ itall    =           1     #  Actualizo resultados al finalizar cada lote (gráficos)
+ kmout =              1     # se informa librerías usadas en file(6)
+ isaba =              0     # interpolación de los datos de S(alfa,beta) que deberían ser calculados pero no lo son en blancos muy finos 
+ ismm  =              1     # activa "multifragmentación estadística" para calcular la producción más precisa de residuos nucleares
+ icxsni  =            0     # 0: Pearlstein-Niita’s formula; 1: KUROTAMA model; 2: Sato’s formula
+ icrhi  =             2     # 0: Shen formula; 1: NASA formula; 2: KUROTAMA model   Options for total cross section of nucleus-nucleus collisions
+ icxnp  =             1     # 0: Original database included in JAM; 1: Data included in JENDL/HE-2007
+# istdev   = -1             #  restart calculation mode (para continuar simulacion)
+
+set: c1[0.0016]           $ espesor del blanco en z [cm] 
+set: c4[1.0]              $ radio del blanco de Li [cm]
+set: c5[0.0500]           $ espesor soporte de Cu  [cm]
+set: c10[3.0e0]            $ posicion z inicio caja para calcular distribucion angular t-cross
+set: c11[0.53]              $ posicion x, y caja para calcular distribucion angular t-cross p1
+set: c12[1.09]              $ posicion x, y caja para calcular distribucion angular t-cross p2
+set: c13[1.73]              $ posicion x, y caja para calcular distribucion angular t-cross p3
+set: c14[2.52]              $ posicion x, y caja para calcular distribucion angular t-cross p4
+set: c15[3.58]              $ posicion x, y caja para calcular distribucion angular t-cross p5
+set: c16[5.20]              $ posicion x, y caja para calcular distribucion angular t-cross p6
+set: c17[8.24]              $ posicion x, y caja para calcular distribucion angular t-cross p7
+set: c18[17.0]              $ posicion x, y caja para calcular distribucion angular t-cross p8
+
+set: c35[1.9e1]            $ Para la visualización (x,y)
+set: c36[4.2e0]            $ Para la visualización z
+
+set: c30[1e4]             $ caja universo [cm]
+set: c31[6.94174064]      $ masa molar Li
+set: c32[18.9984032]      $ masa molar LiF
+set: c33[6.0]             $ energía de los protones incidentes "La energía de los protones es 1912 keV"
+
+[ S o u r c e ]
+ $totfact = 1e6                $flujo total
+   s-type =   2                # Rectangular solid and rectangle source
+   proj =  proton             # kind of incident particle    
+   dir =   1.0                 # z-direction of beam [cosine]
+   phi = 0.0
+   dom = 0.0     
+   x0 = -0.1                   # minimum position of x-axis [cm]
+   x1 =  0.1                   # maximum position of x-axis [cm]
+   y0 = -0.1                   # minimum position of y-axis [cm]
+   y1 =  0.1                   # maximum position of y-axis [cm]
+   z0 = -0.1                   # minimum position of z-axis [cm]
+   z1 = -0.05                   # maximum position of z-axis [cm]
+   e0 = c33                    # energía del proyectil [MeV]
+
+[ M a t e r i a l ]
+mat[1]                      $Aire, fracción atómica. Densidad: 1.205e-3 g/cm^3
+N 7.84374e-1           
+O 2.1076e-1            
+Ar 4.6911e-3           
+C 1.7579e-4            
+            
+mat[2]                      $2.71 g/cm3
+27Al 1           
+            
+mat[3]                      $Polipropileno. Densidad: 0.90 g/cm3
+C 3
+H 6
+
+mat[4]                      $Si natural. Densidad: 2.33 g/cm3
+28Si 0.92234
+29Si 0.04683
+30Si 0.03087
+
+mat[5]                      $Cu natural. Densidad: 8.960 g/cm3
+63Cu 0.6917
+65Cu 0.3083
+
+mat[6]                      $Pb natural. Densidad: 11.340
+208Pb 0.524
+207Pb 0.221
+206Pb 0.241
+204Pb 0.014
+
+mat[7] $Li/LiF Densidad: 0.888 g/cm Densidad Li = 0.534, Densidad LiF =2.635 #6Li 0.02 #7Li 0.98#F 0.5
+Li 1+c31/c32
+F  c31/c32 
+
+[ Mat Name Color ]
+mat name        color
+0 Vacio         lightgray
+1 Aire          pastelcyan
+2 Aluminio      blue
+3 Poly          magenta
+4 Si            0.267 #darkred#
+5 Cu            orange
+6 Pb            violet
+7 Li/LiF  cyanblue
+
+[ S u r f a c e ]
+  10  rpp     -c30 c30 -c30 c30 -c30 c30                            $ borde de la caja que representa el universo xmin , xmax, ymin , ymax , zmin, zmax
+  14  rcc       0 0 0 0 0 c1 c4                                     $blanco de Li
+  15  rcc       0 0 c1 0 0 c5 c4                                    $soporte de Cu para el blanco
+  16  rpp       0.0 c11 0.0 c11 c10 c10*1.1                             $ caja para distribucion angular p1 
+  17  rpp       0.0 c11 c11 c12 c10 c10*1.1                             $ caja para distribucion angular p2 
+  18  rpp       0.0 c11 c12 c13 c10 c10*1.1                             $ caja para distribucion angular p3 
+  19  rpp       0.0 c11 c13 c14 c10 c10*1.1                             $ caja para distribucion angular p4 
+  20  rpp       0.0 c11 c14 c15 c10 c10*1.1                             $ caja para distribucion angular p5 
+  21  rpp       0.0 c11 c15 c16 c10 c10*1.1                             $ caja para distribucion angular p6 
+  22  rpp       0.0 c11 c16 c17 c10 c10*1.1                             $ caja para distribucion angular p7 
+  23  rpp       0.0 c11 c17 c18 c10 c10*1.1                             $ caja para distribucion angular p8 
+
+[ C e l l ] 
+ 100   -1  10                                   $ exterior al universo
+ 101   0 -10 14 15 16 17 18 19 20 21 22 23      $ interior donde se propagan las partìculas
+ 102   7 -0.888 -14                             $ película de Li/LiF
+ 103   5 -8.960 -15                             $ soporte de Cu
+ 104   0 -16                                    $ p1
+ 105   0 -17                                    $ p2
+ 106   0 -18                                    $ p3
+ 107   0 -19                                    $ p4
+ 108   0 -20                                    $ p5
+ 109   0 -21                                    $ p6
+ 110   0 -22                                    $ p7
+ 111   0 -23                                    $ p8
+
+ $104   2 -2.71 -16
+ $105   3 -0.9 -17
+ $106   2 -2.71 -18
+ $107   3 -0.9 -19
+ $108   2 -2.71 -20
+ $109   3 -0.9 -21
+ $110   2 -2.71 -22
+ $111   3 -0.9 -23
+
+[ T - C r o s s ]
+    title = 16 microm de Li/LiF sobre 500 micrones de Cu
+    mesh =  reg                                        # mesh type is region-wise
+    reg =  8                                           # number of crossing regions
+    r-from  r-to   area
+    101     104     c11*c11                                  # hacia p1
+    101     105     c11*(c12-c11)                                 # hacia p2
+    101     106     c11*(c13-c12)                                  # hacia p3
+    101     107     c11*(c14-c13)                                  # hacia p4
+    101     108     c11*(c15-c14)                                  # hacia p5
+    101     109     c11*(c16-c15)                                  # hacia p6
+    101     110     c11*(c17-c16)                                  # hacia p7
+    101     111     c11*(c18-c17)                                  # hacia p8
+
+    e-type =   2                                       # e-mesh is linear (2: lin, 3:log) given by emin, emax and ne
+    ne =   1                                        # bines
+    emin =   1.0e-2                                     # minimum value of e-mesh points (MeV)
+    emax =   0.5e0                                       #140e-3  # maximum value of e-mesh points (MeV)
+    part = neutron
+    $a-type = -2
+    $na = 10
+    $amin = 0.0
+    $amax = 80.0
+    unit =    2                                        # unit is [1/cm2 /MeV/source]
+    axis =  reg                    $, the                                        # axis of output (eng: energy, the: degree)
+    file = reg.output              $n_angular.output                            # nombre del archivo de salida para 'axis'
+    output = current $a-current                                   # corriente a través de la superficie. f-curr b--1curr
+    gshow =    3                                       # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+    epsout =   2                                       # genera archivo eps con ANGEL con barras de error
+$    bmpout = 1                                         # Bitmap figure of 2D tally output
+
+[ T - T r a c k ]off
+     mesh =  xyz            # mesh type is xyz scoring mesh
+   x-type =    2            # x-mesh is linear given by xmin, xmax and nx
+       nx =  200            # number of x-mesh points
+     xmin =   -c35            # minimum value of x-mesh points
+     xmax =    c35            # maximum value of x-mesh points
+   y-type =    1            # y-mesh is given by the below data
+       ny =    1            # number of y-mesh points
+           0.0  5.0
+   z-type =    2            # z-mesh is linear given by zmin, zmax and nz
+       nz =  1000           # number of z-mesh points
+     zmin =  -0.15           # minimum value of z-mesh points
+     zmax =   c36           # maximum value of z-mesh points
+   t-type =    2            # t-mesh is linear given by tmin, tmax and nt
+       nt =    1            # number of t-mesh points
+     tmin =   0.0           # minimum value of t-mesh points
+     tmax =   1.0           # maximum value of t-mesh points
+     part =  all      
+   e-type =    1            # e-mesh is given by the below data
+       ne =    1            # number of e-mesh points
+            0.0  1000.0
+     unit =    1            # unit is [1/cm^2/source]
+     axis =   xz            # axis of output
+     file = track_bloquecitos_xz.out       # file name of output for the above axis
+    title = Blanco de Li/LiF en soporte de Cu 
+    gshow =    3            # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+   epsout =    1            # (D=0) generate eps file by ANGEL
+
+[ T - T r a c k ]off
+     mesh =  xyz            # mesh type is xyz scoring mesh
+   y-type =    2            # x-mesh is linear given by xmin, xmax and nx
+       ny =  200            # number of x-mesh points
+     ymin =   -c35            # minimum value of x-mesh points
+     ymax =    c35            # maximum value of x-mesh points
+   x-type =    1            # y-mesh is given by the below data
+       nx =    1            # number of y-mesh points
+           -5.0  5.0
+   z-type =    2            # z-mesh is linear given by zmin, zmax and nz
+       nz =  1000           # number of z-mesh points
+     zmin =  -0.15           # minimum value of z-mesh points
+     zmax =   c36           # maximum value of z-mesh points
+   t-type =    2            # t-mesh is linear given by tmin, tmax and nt
+       nt =    1            # number of t-mesh points
+     tmin =   0.0           # minimum value of t-mesh points
+     tmax =   1.0           # maximum value of t-mesh points
+     part =  all      
+   e-type =    1            # e-mesh is given by the below data
+       ne =    1            # number of e-mesh points
+            0.0  1000.0
+     unit =    1            # unit is [1/cm^2/source]
+     axis =   yz            # axis of output
+     file = track_bloquecitos_yz.out       # file name of output for the above axis
+    title = Blanco de Li/LiF en soporte de Cu
+    gshow =    3            # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+   epsout =    1            # (D=0) generate eps file by ANGEL
+
+
+[ T - T r a c k ]off
+     mesh =  xyz            # mesh type is xyz scoring mesh
+   y-type =    2            # x-mesh is linear given by xmin, xmax and nx
+       ny =  200            # number of x-mesh points
+     ymin =   -c35            # minimum value of x-mesh points
+     ymax =    c35            # maximum value of x-mesh points
+   z-type =    1            # y-mesh is given by the below data
+       nz =    1            # number of y-mesh points
+           3.0  3.0
+   x-type =    2            # z-mesh is linear given by zmin, zmax and nz
+       nx =  200           # number of z-mesh points
+     xmin =  -c35           # minimum value of z-mesh points
+     xmax =   c35           # maximum value of z-mesh points
+   t-type =    2            # t-mesh is linear given by tmin, tmax and nt
+       nt =    1            # number of t-mesh points
+     tmin =   0.0           # minimum value of t-mesh points
+     tmax =   1.0           # maximum value of t-mesh points
+     part =  all      
+   e-type =    1            # e-mesh is given by the below data
+       ne =    1            # number of e-mesh points
+            0.0  1000.0
+     unit =    1            # unit is [1/cm^2/source]
+     axis =   xy            # axis of output
+     file = track_bloquecitos_xy_2.out       # file name of output for the above axis
+    title = Blanco de Li/LiF en soporte de Cu
+    gshow =    3            # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+   epsout =    1            # (D=0) generate eps file by ANGEL
+
+
+[ T - P r o d u c t ]off
+    title = 16 microm de Li/LiF sobre 500 micrones de Cu
+    part = neutron photon #proton 7Be 7Li 6Li F all
+    mesh = reg
+    reg  = 102                            #(101 102) da igual que all e igual que 102. Entonces, calcula las partículas producidas en 102.
+    volume
+    non     reg         vol
+     1      102         pi*c4*c4*c1
+    material = 1
+        7
+    #mother = 1
+    #    7Li
+    #e-type =   2                                       # e-mesh is linear (2: lin, 3:log) given by emin, emax and ne
+    #ne =   30                                        # bines
+    e-type = 4
+    edel = 1.0e-2                                        # [MeV] 100 keV
+    emin = 1.0e-3
+    emax = 0.5e0 #500e-3
+    unit = 4                                            #  [1/cm3/MeV/source]
+    axis = eng 
+    file = product_eng_11.out
+    output = nuclear                                    #particles from nuclear reaction, including elastic 
+    gshow =    3            # 0: no 1:bnd, 2:bnd+mat, 3:bnd+reg 4:bnd+lat
+    epsout =   2                                       # genera archivo eps con ANGEL con barras de error
+
+[ E n d ]
